@@ -10,3 +10,4 @@ The repository is organized in packages. Each package is about one of the course
 ### List of packages
 
 - `ddp`: **deterministic decision processes**. Introduction to search problems and dynamic programming
+- `mdp`: **Markov decision processes**. Modeling MDP, policy evaluation and value iteration. 
