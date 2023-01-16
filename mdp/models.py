@@ -74,22 +74,21 @@ class MDP(ABC):
         for s_prime in self.states():
             yield s_prime, self.transition(state, action, s_prime), self.reward(state, action, s_prime)
 
+    def transition_reward(self, start_state, action, end_state):
+        return self.transition(start_state, action, end_state), \
+               self.reward(start_state, action, end_state)
+
 
 class Policy(ABC):
 
-    def __init__(self, actions: dict, mdp: MDP):
-        """
-        Implements a policy over MDP.
-        :param actions: a dict of the form state -> action
-        :param mdp: the mdp over which policy is run
-        """
+    def __init__(self, mdp: MDP):
         self.mdp = mdp
-        self.actions = actions
 
+    @abstractmethod
     def action(self, state):
-        return self.actions[state]
+        pass
 
-    def episode(self) -> list:
+    def episode(self, max_len: int = 1000) -> list:
         """
         Generates a random path over MDP. Raise exception is actions or
         states are not compatible with MDP
@@ -107,6 +106,8 @@ class Policy(ABC):
             e.append((current_state, action, chosen, self.mdp.reward(
                 current_state, action, chosen)))
             current_state = chosen
+            if len(e) >= max_len:
+                break
         return e
 
     def utility(self, episode: tuple) -> float:
@@ -117,6 +118,22 @@ class Policy(ABC):
         :return: utility value
         """
         return sum([np.power(self.mdp.gamma, i) * r for i, (_, _, _, r) in enumerate(episode)])
+
+
+class StationaryPolicy(Policy):
+
+    def __init__(self, actions: dict, mdp: MDP):
+        """
+        Implements a policy over MDP.
+        :param actions: a dict of the form state -> action
+        :param mdp: the mdp over which policy is run
+        """
+        super().__init__(mdp)
+        self.actions = actions
+
+    def action(self, state):
+        return self.actions[state]
+
 
 
 class StayQuitMDP(MDP):
@@ -149,7 +166,7 @@ class StayQuitMDP(MDP):
                 'IN': stay_in_reward,
                 'END': stay_end_reward
             },
-            ('IN', 'quit'): {'END': quit_reward, 'IN': np.nan}
+            ('IN', 'quit'): {'END': quit_reward, 'IN': 0.}
         }
         self.stay_in_prob = stay_in_prob
         self.stay_end_prob = stay_end_prob
@@ -180,10 +197,6 @@ class StayQuitMDP(MDP):
             return np.nan
         else:
             return self.rewards[(start_state, action)][end_state]
-
-    def transition_reward(self, start_state, action, end_state):
-        return self.transition(start_state, action, end_state), \
-               self.reward(start_state, action, end_state)
 
     def end(self, state) -> bool:
         return state == 'END'

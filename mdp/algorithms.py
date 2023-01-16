@@ -44,21 +44,34 @@ def value_iteration(mdp: models.MDP, epsilon: float = 1e-10):
     :return: the expected utility for each state
     """
     Vopt = {}
+    policy_history = []
+    value_history = []
     for state in mdp.states():
-        Vopt[state] = (0, None)
+        Vopt[state] = 0
 
-    def Q(s, a):
-        return sum(p * (r + mdp.gamma * Vopt[s_prime][0]) for s_prime, p, r in mdp.successors(s, a))
+    def Qopt(s, a):
+        return sum(p * (r + mdp.gamma * Vopt[s_prime]) for s_prime, p, r in mdp.successors(s, a))
 
     for iteration in range(MAX_ITERATIONS):
         new_values = {}
         for state in mdp.states():
             if mdp.end(state):
-                new_values[state] = (0., None)
+                new_values[state] = 0.
             else:
-                new_values[state] = max((Q(state, a), a) for a in mdp.actions(state))
-        if max(np.abs(new_values[s][0] - Vopt[s][0]) for s in mdp.states()) <= epsilon:
+                new_values[state] = max(Qopt(state, a) for a in mdp.actions(state))
+        if max(np.abs(new_values[s] - Vopt[s]) for s in mdp.states()) <= epsilon:
             break
+        value_history.append(Vopt)
         Vopt = new_values
 
-    return Vopt
+        # Collect policy actions
+        policy = {}
+        for state in mdp.states():
+            if mdp.end(state):
+                chosen_action = None
+            else:
+                chosen_action = max((Qopt(state, action), action) for action in mdp.actions(state))[1]
+            policy[state] = chosen_action
+        policy_history.append(policy)
+
+    return Vopt, policy_history[-1], value_history, policy_history
