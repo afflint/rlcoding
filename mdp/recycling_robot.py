@@ -41,7 +41,7 @@ class RecyclingMDP(models.MDP):
         }
 
     def start(self):
-        return 'H'
+        return {'H'}
 
     def states(self) -> Set:
         return {'H', 'L'}

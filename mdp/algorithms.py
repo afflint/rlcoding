@@ -75,3 +75,49 @@ def value_iteration(mdp: models.MDP, epsilon: float = 1e-10):
         policy_history.append(policy)
 
     return Vopt, policy_history[-1], value_history, policy_history
+
+
+def policy_iteration(mdp: models.MDP, epsilon: float = 1e-10):
+    """
+    1) Initialize pi_s with an arbitrary choice of actions from A
+    2) Run policy evaluation for the current policy
+    3) Update policy: check if the current policy is the value-maximizing action
+        If not, update the policy and repeat step 2
+    :param mdp: the MDP model
+    :param epsilon: termination
+    :return: Selected policy
+    """
+    ## Initialize the policy randomly
+    state_actions = {}
+    history = []
+    for s in mdp.states():
+        if len(mdp.actions(s)) > 0:
+            a = np.random.choice(list(mdp.actions(s)))
+        else:
+            a = None
+        state_actions[s] = a
+
+    pi = models.StationaryPolicy(state_actions, mdp)
+
+    for iteration in range(MAX_ITERATIONS):
+        # Policy evaluation
+        optimal_policy = True # we assume this is the optimal policy
+        V = policy_evaluation(pi, mdp, epsilon)
+        history.append((dict(list(
+            state_actions.items())), V)) # keep track of what we do just for the records
+        # Now we run policy update
+        for s in mdp.states():
+            current_value = V[s]
+            for a in mdp.actions(s):
+                new_value = sum(p * (r + mdp.gamma * V[s_prime]) for
+                                s_prime, p, r in mdp.successors(s, a))
+                if new_value > current_value and state_actions[s] != a: # We found a new better action
+                    state_actions[s] = a
+                    current_value = new_value
+                    optimal_policy = False
+        pi = models.StationaryPolicy(state_actions, mdp)
+        if optimal_policy: # nothing has changed, we can stop
+            break
+    return pi, history
+
+
