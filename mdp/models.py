@@ -91,7 +91,8 @@ class Policy(ABC):
     def episode(self, max_len: int = 1000) -> list:
         """
         Generates a random path over MDP. Raise exception is actions or
-        states are not compatible with MDP
+        states are not compatible with MDP.
+        This is for finite horizon MDPs mainly (see max_len).
         :return: list of (start, action, reward))
         """
         e = []
