@@ -1,0 +1,108 @@
+<html>
+<head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vis-network@latest/styles/vis-network.css" type="text/css" />
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vis-network@latest/dist/vis-network.min.js"> </script>
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+
+<style type="text/css">
+
+        #mynetwork {
+            width: 1200px;
+            height: 600px;
+            background-color: #ffffff;
+            border: 1px solid lightgray;
+            position: relative;
+            float: left;
+        }
+
+        
+
+        
+
+        
+</style>
+
+</head>
+
+<body>
+<div id = "mynetwork"></div>
+
+
+<script type="text/javascript">
+
+    // initialize global variables.
+    var edges;
+    var nodes;
+    var network; 
+    var container;
+    var options, data;
+
+    
+    // This method is responsible for drawing the graph, returns the drawn network
+    function drawGraph() {
+        var container = document.getElementById('mynetwork');
+        
+        
+
+        // parsing and collecting nodes and edges from the python
+        nodes = new vis.DataSet([{"color": "#cc9900", "id": 0, "label": "E", "shape": "dot", "size": 10, "type": "state"}, {"color": "#ff9900", "id": 4, "label": "(E, L)", "shape": "dot", "size": 5, "type": "transition_state"}, {"color": "#ff9900", "id": 5, "label": "(E, R)", "shape": "dot", "size": 5, "type": "transition_state"}, {"color": "#999900", "id": 1, "label": "T", "shape": "dot", "size": 10, "type": "state"}, {"color": "#ff9900", "id": 6, "label": "(T, L)", "shape": "dot", "size": 5, "type": "transition_state"}, {"color": "#ff9900", "id": 7, "label": "(T, R)", "shape": "dot", "size": 5, "type": "transition_state"}, {"color": "#999900", "id": 2, "label": "M", "shape": "dot", "size": 10, "type": "state"}, {"color": "#ff9900", "id": 8, "label": "(M, L)", "shape": "dot", "size": 5, "type": "transition_state"}, {"color": "#ff9900", "id": 9, "label": "(M, R)", "shape": "dot", "size": 5, "type": "transition_state"}, {"color": "#000000", "id": 3, "label": "O", "shape": "dot", "size": 10, "type": "state"}, {"color": "#ff9900", "id": 10, "label": "(O, L)", "shape": "dot", "size": 5, "type": "transition_state"}, {"color": "#ff9900", "id": 11, "label": "(O, R)", "shape": "dot", "size": 5, "type": "transition_state"}]);
+        edges = new vis.DataSet([{"action": "L", "arrows": "to", "from": 0, "label": "L", "to": 4, "type": "state_action", "weight": 1}, {"action": "R", "arrows": "to", "from": 0, "label": "R", "to": 5, "type": "state_action", "weight": 1}, {"action": "L", "arrows": "to", "from": 1, "label": "L", "to": 6, "type": "state_action", "weight": 1}, {"action": "R", "arrows": "to", "from": 1, "label": "R", "to": 7, "type": "state_action", "weight": 1}, {"action": "L", "arrows": "to", "from": 2, "label": "L", "to": 8, "type": "state_action", "weight": 1}, {"action": "R", "arrows": "to", "from": 2, "label": "R", "to": 9, "type": "state_action", "weight": 1}, {"action": "L", "arrows": "to", "from": 3, "label": "L", "to": 10, "type": "state_action", "weight": 1}, {"action": "R", "arrows": "to", "from": 3, "label": "R", "to": 11, "type": "state_action", "weight": 1}, {"arrows": "to", "from": 4, "label": "0.5,0", "p": 0.5, "r": 0, "to": 0, "type": "transition", "weight": 1}, {"arrows": "to", "from": 4, "label": "0.3,10", "p": 0.3, "r": 10, "to": 1, "type": "transition", "weight": 1}, {"arrows": "to", "from": 4, "label": "0.1,-50", "p": 0.1, "r": -50, "to": 2, "type": "transition", "weight": 1}, {"arrows": "to", "from": 4, "label": "0.1,0", "p": 0.1, "r": 0, "to": 3, "type": "transition", "weight": 1}, {"arrows": "to", "from": 5, "label": "0.5,0", "p": 0.5, "r": 0, "to": 0, "type": "transition", "weight": 1}, {"arrows": "to", "from": 5, "label": "0.1,10", "p": 0.1, "r": 10, "to": 1, "type": "transition", "weight": 1}, {"arrows": "to", "from": 5, "label": "0.3,-50", "p": 0.3, "r": -50, "to": 2, "type": "transition", "weight": 1}, {"arrows": "to", "from": 5, "label": "0.1,0", "p": 0.1, "r": 0, "to": 3, "type": "transition", "weight": 1}, {"arrows": "to", "from": 6, "label": "0.5,0", "p": 0.5, "r": 0, "to": 0, "type": "transition", "weight": 1}, {"arrows": "to", "from": 6, "label": "0.3,10", "p": 0.3, "r": 10, "to": 1, "type": "transition", "weight": 1}, {"arrows": "to", "from": 6, "label": "0.1,-50", "p": 0.1, "r": -50, "to": 2, "type": "transition", "weight": 1}, {"arrows": "to", "from": 6, "label": "0.1,0", "p": 0.1, "r": 0, "to": 3, "type": "transition", "weight": 1}, {"arrows": "to", "from": 7, "label": "0.5,0", "p": 0.5, "r": 0, "to": 0, "type": "transition", "weight": 1}, {"arrows": "to", "from": 7, "label": "0.1,10", "p": 0.1, "r": 10, "to": 1, "type": "transition", "weight": 1}, {"arrows": "to", "from": 7, "label": "0.3,-50", "p": 0.3, "r": -50, "to": 2, "type": "transition", "weight": 1}, {"arrows": "to", "from": 7, "label": "0.1,0", "p": 0.1, "r": 0, "to": 3, "type": "transition", "weight": 1}, {"arrows": "to", "from": 8, "label": "0.5,0", "p": 0.5, "r": 0, "to": 0, "type": "transition", "weight": 1}, {"arrows": "to", "from": 8, "label": "0.3,10", "p": 0.3, "r": 10, "to": 1, "type": "transition", "weight": 1}, {"arrows": "to", "from": 8, "label": "0.1,-50", "p": 0.1, "r": -50, "to": 2, "type": "transition", "weight": 1}, {"arrows": "to", "from": 8, "label": "0.1,0", "p": 0.1, "r": 0, "to": 3, "type": "transition", "weight": 1}, {"arrows": "to", "from": 9, "label": "0.5,0", "p": 0.5, "r": 0, "to": 0, "type": "transition", "weight": 1}, {"arrows": "to", "from": 9, "label": "0.1,10", "p": 0.1, "r": 10, "to": 1, "type": "transition", "weight": 1}, {"arrows": "to", "from": 9, "label": "0.3,-50", "p": 0.3, "r": -50, "to": 2, "type": "transition", "weight": 1}, {"arrows": "to", "from": 9, "label": "0.1,0", "p": 0.1, "r": 0, "to": 3, "type": "transition", "weight": 1}]);
+
+        // adding nodes and edges to the graph
+        data = {nodes: nodes, edges: edges};
+
+        var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+        
+        
+
+        
+
+        network = new vis.Network(container, data, options);
+	 
+        
+
+
+        
+
+        return network;
+
+    }
+
+    drawGraph();
+
+</script>
+</body>
+</html>

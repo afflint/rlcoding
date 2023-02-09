@@ -1,13 +1,12 @@
 # Algorithms for Policy Evaluation and Value Iteration
 import numpy as np
 
-import models
-
+from mdp.models import MDP, Policy, StationaryPolicy
 MAX_ITERATIONS = 1000
 
 
-def policy_evaluation(policy: models.Policy,
-                      mdp: models.MDP, epsilon: float = 1e-10):
+def policy_evaluation(policy: Policy,
+                      mdp: MDP, epsilon: float = 1e-10):
     """
     V_t(s) = Q_{t-1}(s, pi_s)
     Q_{t-1}(s, pi_s) = sum_s' T(s, a, s')[reward(s, pi_s, s') + gamma * V_{t-1}(s')
@@ -35,7 +34,7 @@ def policy_evaluation(policy: models.Policy,
     return V
 
 
-def value_iteration(mdp: models.MDP, epsilon: float = 1e-10):
+def value_iteration(mdp: MDP, epsilon: float = 1e-10):
     """
     Vopt_t(s) = max_a Qopt_{t-1}(s, a)
     Qopt_{t-1}(s, a) = sum_s' T(s, a, s')[reward(s, a, s') + gamma * Vopt_{t-1}(s')
@@ -77,7 +76,7 @@ def value_iteration(mdp: models.MDP, epsilon: float = 1e-10):
     return Vopt, policy_history[-1], value_history, policy_history
 
 
-def policy_iteration(mdp: models.MDP, epsilon: float = 1e-10):
+def policy_iteration(mdp: MDP, epsilon: float = 1e-10):
     """
     1) Initialize pi_s with an arbitrary choice of actions from A
     2) Run policy evaluation for the current policy
@@ -97,7 +96,7 @@ def policy_iteration(mdp: models.MDP, epsilon: float = 1e-10):
             a = None
         state_actions[s] = a
 
-    pi = models.StationaryPolicy(state_actions, mdp)
+    pi = StationaryPolicy(state_actions, mdp)
 
     for iteration in range(MAX_ITERATIONS):
         # Policy evaluation
@@ -115,7 +114,7 @@ def policy_iteration(mdp: models.MDP, epsilon: float = 1e-10):
                     state_actions[s] = a
                     current_value = new_value
                     optimal_policy = False
-        pi = models.StationaryPolicy(state_actions, mdp)
+        pi = StationaryPolicy(state_actions, mdp)
         if optimal_policy: # nothing has changed, we can stop
             break
     return pi, history

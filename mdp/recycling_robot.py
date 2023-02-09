@@ -1,9 +1,9 @@
 from typing import Set
 
-import models
+import mdp.models
 
 
-class RecyclingMDP(models.MDP):
+class RecyclingMDP(mdp.models.MDP):
 
     def __init__(self, alpha: float, beta: float,
                  r_search: float, r_wait: float, gamma: float=.99):
@@ -66,3 +66,15 @@ class RecyclingMDP(models.MDP):
 
     def end(self, state) -> bool:
         return False
+
+    def successors(self, state, action):
+        options = []
+        for s_prime in self.states():
+            p = self.transition(state, action, s_prime)
+            if p > 0:
+                options.append((
+                    s_prime,
+                    p,
+                    self.reward(state, action, s_prime)
+                ))
+        return options

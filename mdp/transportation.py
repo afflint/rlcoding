@@ -1,6 +1,6 @@
 from typing import Set
 
-from models import MDP
+from mdp.models import MDP
 
 
 class TransportationMDP(MDP):

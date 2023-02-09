@@ -5,7 +5,7 @@ import pyvis
 from IPython.core.display import clear_output, display
 from pyvis.network import Network
 
-from models import MDP
+from mdp.models import MDP
 
 
 def transitions_table(mdp):
@@ -47,7 +47,7 @@ def show_policy_iterations(history):
             break
 
 
-def mdp_to_graph(mdp: MDP, state_node_size: int=10, q_node_size: int=5):
+def mdp_to_graph(mdp, state_node_size: int=10, q_node_size: int=5):
     G = nx.DiGraph()
     node2id = dict([(state, i) for i, state in enumerate(mdp.states())])
     t2id = {}
