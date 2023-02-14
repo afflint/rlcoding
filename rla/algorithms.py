@@ -80,6 +80,7 @@ def sarsa(mdp,
     for episode in range(num_episodes):
         R = defaultdict(lambda : 0)
         state = np.random.choice(list(mdp.start()))
+        # TODO fix this with a_prime
         action = epsilon_greedy(state)
         for step in range(max_steps):
 
