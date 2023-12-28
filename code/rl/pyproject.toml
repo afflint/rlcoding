@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "rl"
+version = "0.1.0"
+description = "Code for the Reinforcement Learning classes at the University of Milan"
+authors = ["Alfio Ferrara <alfio.ferrara@unimi.it>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.13"
+numpy = "^1.26.0"
+pandas = "^2.1.1"
+matplotlib = "^3.8.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

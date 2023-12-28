@@ -1,0 +1,29 @@
+{"_id":"08LfCGl7V6t5dSJk","name":"Environment","kind":"StandardType","isMandatory":false}
+{"_id":"2MPm5jRRqEPqPF0K","name":"gamma","isAbstract":false,"type":"atbw4bTQwOlYvsK2","isReadOnly":false,"visibility":"public","isStatic":false,"classifierId":"vmIHy5Yeuir4GKxV","discriminator":"Property","kind":"Property","index":4}
+{"_id":"2wibbyqLsKeAGkZH","name":"string","kind":"StandardType","isMandatory":true,"defaultRole":"propertyType"}
+{"methodId":"6CzUQxVJIOboVch2","name":"action","type":"PXf9SvmrVzSe7w6c","kind":"Parameter","discriminator":"Parameter","index":1,"_id":"3xEzjyEXtAkVNSjZ"}
+{"_id":"6CzUQxVJIOboVch2","name":"update","isAbstract":false,"type":"vxxdGdijCPh3UZPV","visibility":"public","isStatic":false,"classifierId":"vmIHy5Yeuir4GKxV","discriminator":"Method","kind":"Method","index":1}
+{"_id":"6tSYfsamvKMFViir","name":"learning_rate","isAbstract":false,"type":"atbw4bTQwOlYvsK2","isReadOnly":false,"visibility":"public","isStatic":false,"classifierId":"vmIHy5Yeuir4GKxV","discriminator":"Property","kind":"Property","index":0}
+{"methodId":"6CzUQxVJIOboVch2","name":"terminated","type":"QagxK7LoT0XEaHeM","kind":"Parameter","discriminator":"Parameter","index":3,"_id":"8iVQUcVvNA9Ev3bL"}
+{"methodId":"6CzUQxVJIOboVch2","name":"state","type":"UpJIrYt2If2na3BQ","kind":"Parameter","discriminator":"Parameter","index":0,"_id":"9OrwEXlzAU5cqhEl"}
+{"_id":"BPVDdDVxPgaWi4pW","name":"final_epsilon","isAbstract":false,"type":"atbw4bTQwOlYvsK2","isReadOnly":false,"visibility":"public","isStatic":false,"classifierId":"vmIHy5Yeuir4GKxV","discriminator":"Property","kind":"Property","index":3}
+{"_id":"DE9ihImKGreUDdaM","name":"epsilon","isAbstract":false,"type":"atbw4bTQwOlYvsK2","isReadOnly":false,"visibility":"public","isStatic":false,"classifierId":"vmIHy5Yeuir4GKxV","discriminator":"Property","kind":"Property","index":1}
+{"_id":"F9rYWgNOfRBDZOlv","name":"decay_epsilon","isAbstract":false,"type":"vxxdGdijCPh3UZPV","visibility":"public","isStatic":false,"classifierId":"vmIHy5Yeuir4GKxV","discriminator":"Method","kind":"Method","index":2}
+{"methodId":"vUdePWZPqJB1nXS2","name":"state","type":"UpJIrYt2If2na3BQ","kind":"Parameter","discriminator":"Parameter","index":0,"_id":"FiD9xCTOIVcyUpNk"}
+{"_id":"IDauQEHCxHFB4WFS","name":"epsilon_decay","isAbstract":false,"type":"atbw4bTQwOlYvsK2","isReadOnly":false,"visibility":"public","isStatic":false,"classifierId":"vmIHy5Yeuir4GKxV","discriminator":"Property","kind":"Property","index":2}
+{"_id":"Mocgyw59JQE2WKbU","name":"any","kind":"StandardType","isMandatory":true,"defaultRole":"parameterType"}
+{"_id":"Nqa1ewf7Ol0W7wA4","name":"Gym agent for solving blackjack","kind":"ClassDiagram","titlePosition":{"x":550,"y":24},"version":"1.10.0","dimension":{"width":4000,"height":4000}}
+{"_id":"PXf9SvmrVzSe7w6c","name":"int","kind":"StandardType","isMandatory":false}
+{"_id":"QagxK7LoT0XEaHeM","name":"boolean","kind":"StandardType","isMandatory":false}
+{"_id":"UpJIrYt2If2na3BQ","name":"tuple","kind":"StandardType","isMandatory":false}
+{"_id":"atbw4bTQwOlYvsK2","name":"float","kind":"StandardType","isMandatory":false}
+{"_id":"dR9KXM8ypGfaVifo","name":"char","kind":"StandardType","isMandatory":false}
+{"methodId":"6CzUQxVJIOboVch2","name":"s_prime","type":"UpJIrYt2If2na3BQ","kind":"Parameter","discriminator":"Parameter","index":4,"_id":"fwBCiPsamjN6GeBJ"}
+{"_id":"hI3D4RV3J4UBSuug","name":"time","kind":"StandardType","isMandatory":false}
+{"_id":"htegqS0aR6czOuOc","name":"date","kind":"StandardType","isMandatory":false}
+{"methodId":"6CzUQxVJIOboVch2","name":"reward","type":"atbw4bTQwOlYvsK2","kind":"Parameter","discriminator":"Parameter","index":2,"_id":"qhm6zlseEDdvklfj"}
+{"_id":"tzLVMJYW08Jotfer","name":"environment","isAbstract":false,"type":"08LfCGl7V6t5dSJk","isReadOnly":false,"visibility":"public","isStatic":false,"classifierId":"vmIHy5Yeuir4GKxV","discriminator":"Property","kind":"Property","index":5}
+{"_id":"vUdePWZPqJB1nXS2","name":"policy","isAbstract":false,"type":"PXf9SvmrVzSe7w6c","visibility":"public","isStatic":false,"classifierId":"vmIHy5Yeuir4GKxV","discriminator":"Method","kind":"Method","index":0}
+{"_id":"vmIHy5Yeuir4GKxV","isAbstract":false,"isFinal":false,"isInterface":false,"diagramId":"Nqa1ewf7Ol0W7wA4","name":"BlackJack Agent","kind":"Class","position":{"x":484.5,"y":200},"discriminator":"Class","stereotypes":[],"customDimension":{"width":699.8125,"height":284.15625}}
+{"_id":"vxxdGdijCPh3UZPV","name":"void","kind":"StandardType","isMandatory":true,"defaultRole":"methodReturnType"}
+{"_id":"xzT1ybbaSffqAXmL","name":"double","kind":"StandardType","isMandatory":false}

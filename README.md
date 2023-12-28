@@ -1,13 +1,20 @@
+### Proff. Nicolò Cesa-Bianchi and Alfio Ferrara
+
 # rlcoding
-Examples for the RL course
+
+#### Code and examples for the Reinforcement Learning classes
+
+Data Science and Economics Master Degree, Università degli Studi di Milano
 
 
 
-## Code organization
+## Repository organization
 
-The repository is organized in packages. Each package is about one of the course topics plus other materials and examples. Each package is composed by two main Python modules, namely `models` and `algorithms`. In addition, some `Jupyter` notebooks are included in each package to test the code.
+The current Academic Year's materials are stored in the `code` folder. Other folders are storing examples and code snippets of previous years (e.g., the folder `2022-23` contains materials for the AA 2022-23).
 
-### List of packages
+Coding is implemented using the Python libraries [pyenv](https://github.com/pyenv/pyenv) for setting up the virtual environment and [poetry](https://python-poetry.org/) for managing dependencies. The main poetry project is called `rl`. 
 
-- `ddp`: **deterministic decision processes**. Introduction to search problems and dynamic programming
-- `mdp`: **Markov decision processes**. Modeling MDP, policy evaluation and value iteration. 
+The code follows two approaches:
+
+1. Implementing environment, models and algorithms **from scratch** (mainly for teaching purposes). This is stored in the package `rl.scratch`
+2. Code implemented using the [gymnasium](https://gymnasium.farama.org/) library, stored in the package `rl.gym`

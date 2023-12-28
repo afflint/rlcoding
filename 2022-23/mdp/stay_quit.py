@@ -1,6 +1,6 @@
 from typing import Set
 
-from mdp.models import MDP
+from models import MDP
 
 
 class StayQuitMDP(MDP):

@@ -1,7 +1,7 @@
 # Algorithms for Policy Evaluation and Value Iteration
 import numpy as np
 
-from mdp.models import MDP, Policy, StationaryPolicy
+from models import MDP, Policy, StationaryPolicy
 MAX_ITERATIONS = 1000
 
 

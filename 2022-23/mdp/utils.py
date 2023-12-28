@@ -5,7 +5,7 @@ import pyvis
 from IPython.core.display import clear_output, display
 from pyvis.network import Network
 
-from mdp.models import MDP
+from models import MDP
 
 
 def transitions_table(mdp):

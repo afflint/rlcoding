@@ -1,0 +1,35 @@
+{"_id":"0JA9YiycrZEt0Rdm","name":"string","kind":"StandardType","isMandatory":true,"defaultRole":"propertyType"}
+{"methodId":"qwUvg7Jd4zA0yTsT","name":"agent","type":"2plDlkLWzQrORnf0","kind":"Parameter","discriminator":"Parameter","index":0,"_id":"0is6FHBpnHWlOGOb"}
+{"_id":"2plDlkLWzQrORnf0","isAbstract":false,"isFinal":false,"isInterface":false,"diagramId":"c3yijZFpuWioBWFU","name":"Agent","kind":"Class","position":{"x":479.5,"y":417},"discriminator":"Class","stereotypes":[]}
+{"_id":"3NODy1gjAJFtEPgt","name":"uses","diagramId":"c3yijZFpuWioBWFU","kind":"Relationship","relationshipKind":"Usage","source":{"id":"2plDlkLWzQrORnf0","isAutoDocking":true,"positionInPercent":0.5},"target":{"id":"D9m4ejWpHUpwzo8A","isAutoDocking":false,"dockingSide":"BOTTOM","positionInPercent":0.5,"isNavigable":true}}
+{"_id":"4VfkQSHL3WINdCpt","name":"","diagramId":"c3yijZFpuWioBWFU","kind":"Relationship","relationshipKind":"NoteLink","source":{"id":"96BdMEoj6W4E50DS","isAutoDocking":true,"positionInPercent":0.5},"target":{"id":"D9m4ejWpHUpwzo8A","isAutoDocking":false,"dockingSide":"LEFT","positionInPercent":0.5,"isNavigable":false}}
+{"_id":"52LnhxyNF7EGo3Hl","name":"__get_item__","isAbstract":false,"type":"GxM9F6S2ABkbRIh0","visibility":"public","isStatic":false,"classifierId":"ymgtxUfCM9lWIL4t","discriminator":"Method","kind":"Method","index":0}
+{"_id":"677w79ASCf2FNbzE","discriminator":"Note","position":{"x":1247,"y":162},"diagramId":"c3yijZFpuWioBWFU","text":"We use special Environment subclasses to model other Environment characteristics (such as for visualization)","kind":"Note","showNoteBackgroundTexture":true,"autosize":false,"supportMarkdown":true}
+{"_id":"96BdMEoj6W4E50DS","discriminator":"Note","position":{"x":210,"y":157},"diagramId":"c3yijZFpuWioBWFU","text":"We define a transition function taking an Agent and an action as input and providing a probability distribution over the outcome","kind":"Note","showNoteBackgroundTexture":true,"autosize":false,"supportMarkdown":true}
+{"_id":"AWStnketsPKWjrF6","name":"double","kind":"StandardType","isMandatory":false}
+{"_id":"BxMjN78hKZnZbB8w","text":"__get_item__ returns an action","kind":"FreeformText","index":0,"classifierId":"ymgtxUfCM9lWIL4t"}
+{"_id":"D9m4ejWpHUpwzo8A","isAbstract":false,"isFinal":false,"isInterface":false,"diagramId":"c3yijZFpuWioBWFU","name":"Environment","kind":"Class","position":{"x":531.5,"y":129},"discriminator":"Class","stereotypes":[],"customDimension":{"width":641.140625,"height":201.953125}}
+{"_id":"ER6Gite6oLfzl4fI","name":"state","isAbstract":false,"type":"ummMAxDGmnFWXAu2","isReadOnly":false,"visibility":"public","isStatic":false,"classifierId":"2plDlkLWzQrORnf0","discriminator":"Property","kind":"Property","index":0}
+{"_id":"F4rcvt3AOxjmh9zY","name":"Set","kind":"StandardType","isMandatory":false}
+{"_id":"GxM9F6S2ABkbRIh0","name":"int","kind":"StandardType","isMandatory":false}
+{"_id":"HUOZwtgqnx4PY9Ku","name":"time","kind":"StandardType","isMandatory":false}
+{"methodId":"dxjGcDMIyrZv1NcJ","name":"action","type":"GxM9F6S2ABkbRIh0","kind":"Parameter","discriminator":"Parameter","index":0,"_id":"LJ7PCpAbBzrpHKSS"}
+{"_id":"PArzxTCRD4RfU4ja","name":"void","kind":"StandardType","isMandatory":true,"defaultRole":"methodReturnType"}
+{"_id":"Ql5eq5zpipDUv3Jf","name":"uses","diagramId":"c3yijZFpuWioBWFU","kind":"Relationship","relationshipKind":"Usage","source":{"id":"2plDlkLWzQrORnf0","isAutoDocking":true,"positionInPercent":0.5},"target":{"id":"ymgtxUfCM9lWIL4t","isAutoDocking":false,"dockingSide":"LEFT","positionInPercent":0.5,"isNavigable":true}}
+{"_id":"ZkQUvBQPOzzc4cLb","name":"actions","isAbstract":false,"type":"F4rcvt3AOxjmh9zY","isReadOnly":false,"visibility":"public","isStatic":false,"classifierId":"D9m4ejWpHUpwzo8A","discriminator":"Property","kind":"Property","index":0}
+{"_id":"aRcwl0ImOKO7W9gY","name":"callable","kind":"StandardType","isMandatory":false}
+{"_id":"bSHAwgveJXwyNMEY","name":"float","kind":"StandardType","isMandatory":false}
+{"_id":"c3yijZFpuWioBWFU","name":"Approximate Methods for RL","kind":"ClassDiagram","titlePosition":{"x":550,"y":24},"version":"1.10.0","dimension":{"width":4000,"height":4000}}
+{"_id":"dxazu3hdlYyEHBNM","name":"date","kind":"StandardType","isMandatory":false}
+{"_id":"dxjGcDMIyrZv1NcJ","name":"outcome","isAbstract":false,"type":"PArzxTCRD4RfU4ja","visibility":"public","isStatic":false,"classifierId":"D9m4ejWpHUpwzo8A","discriminator":"Method","kind":"Method","index":0}
+{"_id":"gTbdq8rZlSx8sjyi","name":"any","kind":"StandardType","isMandatory":true,"defaultRole":"parameterType"}
+{"_id":"k5m3NVXlbcGqi6Yc","name":"char","kind":"StandardType","isMandatory":false}
+{"_id":"kMklZYOV81z0oU7y","name":"Agent","kind":"StandardType","isMandatory":false}
+{"_id":"l9i7mEI8kq1vIomm","text":"# outcome changes the state of the Agent according to the outcome of the action","kind":"FreeformText","index":0,"classifierId":"D9m4ejWpHUpwzo8A"}
+{"_id":"mhyAkdLa3VOUMtHe","name":"","diagramId":"c3yijZFpuWioBWFU","kind":"Relationship","relationshipKind":"NoteLink","source":{"id":"677w79ASCf2FNbzE","isAutoDocking":true,"positionInPercent":0.5},"target":{"id":"D9m4ejWpHUpwzo8A","isAutoDocking":true,"positionInPercent":0.5,"isNavigable":false}}
+{"_id":"qwUvg7Jd4zA0yTsT","name":"terminal","isAbstract":false,"type":"w1ypvKsmmQ3MPMeK","visibility":"public","isStatic":false,"classifierId":"D9m4ejWpHUpwzo8A","discriminator":"Method","kind":"Method","index":1}
+{"_id":"ummMAxDGmnFWXAu2","name":"ndarray","kind":"StandardType","isMandatory":false}
+{"_id":"w1ypvKsmmQ3MPMeK","name":"boolean","kind":"StandardType","isMandatory":false}
+{"methodId":"dxjGcDMIyrZv1NcJ","name":"agent","type":"kMklZYOV81z0oU7y","kind":"Parameter","discriminator":"Parameter","index":1,"_id":"w9NWfstrGWoKIteB"}
+{"methodId":"52LnhxyNF7EGo3Hl","name":"agent","type":"kMklZYOV81z0oU7y","kind":"Parameter","discriminator":"Parameter","index":0,"_id":"yR0EUqMQPgS3GEXT"}
+{"_id":"ymgtxUfCM9lWIL4t","isAbstract":false,"isFinal":false,"isInterface":false,"diagramId":"c3yijZFpuWioBWFU","name":"Policy","kind":"Class","position":{"x":214.5,"y":585},"discriminator":"Class","stereotypes":[]}

@@ -9,6 +9,7 @@ __pycache__/
 # IDE
 .idea/
 .ipynb_checkpoints/
+.python-version
 
 # Distribution / packaging
 .Python
