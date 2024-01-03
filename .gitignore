@@ -10,6 +10,8 @@ __pycache__/
 .idea/
 .ipynb_checkpoints/
 .python-version
+.vscode
+.DS_Store
 
 # Distribution / packaging
 .Python
