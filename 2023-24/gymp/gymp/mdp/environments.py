@@ -6,6 +6,106 @@ from gymnasium import spaces
 from gymnasium.envs.registration import register
 
 
+class GridSuttonBarto(gym.Env):
+    """Example 4.1
+    """
+    metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
+
+    def __init__(self, size: int = 16) -> None:
+        super().__init__()
+        if not np.sqrt(size)**2 == size:
+            raise ValueError("Size must be a square")
+        self.size = size
+        self.row = int(np.sqrt(size))
+        # Note that we observe each tile as a number displaced in square format
+        self.observation_space = spaces.Discrete(size)
+        # Actions N, E, S, W
+        self.action_space = spaces.Discrete(4)
+        self.action_to_direction = {
+            0: -4, # North
+            1: +1, # East
+            2: +4,  # South
+            3: -1  # West
+        }
+        self._agent_location = 0 # we always start from 0
+        self._left_border = list(range(0, self.size, self.row))
+        self._right_border = list(range(self.row - 1, self.size, self.row))
+
+    def proba(self, state: int, action: int, s_prime: int):
+        if s_prime in self._left_border and action == 3:
+            return 0
+        elif s_prime in self._right_border and action == 1:
+            return 0
+        elif s_prime < 0 or s_prime >= self.size:
+            return 0
+        else:
+            new_location = state + self.action_to_direction[action]
+            if new_location == s_prime:
+                return 1
+            else:
+                return 0
+    
+    def reward(self, state):
+        if state == 0 or state == self.size - 1:
+            return 0
+        else:
+            return -1
+        
+    
+    def _move(self, action: int):
+        # cannot go west if you are on the left border (stay where you are)
+        if self._agent_location % self.row == 0 and action == 3:
+            return
+        # cannot go east if you are on the right border (stay where you are)
+        if self._agent_location % self.row == self.row - 1 and action == 1:
+            return
+        new_position = self._agent_location + self.action_to_direction[action]
+        if 0 <= new_position < self.size:
+            self._agent_location = new_position
+    
+    def _get_obs(self):
+        return self._agent_location
+    
+    def _get_info(self):
+        return dict()
+    
+    def reset(self, seed=None, options=None):
+        # We need the following line to seed self.np_random
+        super().reset(seed=seed, options=options)
+        self._agent_location = 0
+        observation = self._get_obs()
+        info = self._get_info()
+        if self.render_mode == "human":
+            self._render_frame()
+        return observation, info
+    
+    def step(self, action: int):
+        self._move(action)
+        # An episode is done iff the agent has reached the target (this is always size - 1)
+        terminated = self._agent_location == self.size - 1
+        reward = -1 # always -1
+        observation = self._get_obs()
+        info = self._get_info()
+
+        if self.render_mode == "human":
+            self._render_frame()
+
+        return observation, reward, terminated, False, info
+
+    def render(self):
+        # to be implemented
+        pass
+
+    def _render_frame(self):
+        # to be implemented
+        pass
+
+#Register the environment
+register(
+    id="GridSuttonBarto-v0",
+    entry_point=lambda size: GridSuttonBarto(size=size),
+    max_episode_steps=300,
+)
 
 class GridWorldEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
