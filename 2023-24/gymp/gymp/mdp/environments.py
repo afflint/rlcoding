@@ -4,7 +4,86 @@ import pygame
 import gymnasium as gym
 from gymnasium import spaces
 from gymnasium.envs.registration import register
+from typing import Any
 
+
+class Conservatorio(gym.Env):
+    def __init__(self, size: int = 16, 
+                train_prob: float = .5, bus_prob: float = .2,
+                walk_r: int = -2, bus_r: int = -1, train_r: int = -1) -> None:
+        assert 0 <= train_prob <= 1
+        assert 0 <= bus_prob <= 1
+        super().__init__()
+        self.size = size 
+        self.observation_space = spaces.Discrete(self.size)
+        self.action_space = spaces.Discrete(3)
+        self._agent_position = 0
+        self.train_p = train_prob
+        self.bus_p = bus_prob
+        self.walk_r = walk_r
+        self.bus_r = bus_r
+        self.train_r = train_r
+        self.target = self.observation_space.n - 1
+    
+    @property
+    def _get_obs(self):
+        return self._agent_position
+    
+    @property
+    def _get_info(self):
+        return {'distance': self.observation_space.n - self._agent_position}
+    
+    def _move(self, action):
+        if action == 0: # walk
+            self._agent_position += 1
+            reward = self.walk_r
+        elif action == 1: # bus
+            reward = self.bus_r
+            if np.random.uniform() < self.bus_p:
+                pass
+            else:
+                n_p = self._agent_position + 2
+                if n_p > self.target:
+                    pass
+                else:
+                    self._agent_position = n_p
+        elif action == 2: # train
+            reward = self.train_r
+            if np.random.uniform() < self.train_p:
+                pass
+            else:
+                n_p = self._agent_position * 2
+                if n_p > self.target:
+                    pass
+                else:
+                    self._agent_position = n_p
+        return reward
+    
+    def get_state(self):
+        return self._agent_position
+            
+    
+    def reset(self, seed=None, options=None) -> tuple[Any, dict[str, Any]]:
+        super().reset(seed=seed, options=options)
+        self._agent_position = 0
+        return self._get_obs, self._get_info
+    
+    def step(self, action):
+        reward = self._move(action=action)
+        observation = self._get_obs
+        terminated = self._agent_position >= self.observation_space.n - 1
+        info = self._get_info
+        return observation, reward, terminated, False, info
+    
+    
+#Register the environment
+register(
+    id="Conservatorio-v0",
+    entry_point=lambda size, train_prob, bus_prob, walk_r, 
+                                        bus_r, train_r: Conservatorio(size, train_prob, bus_prob, walk_r, 
+                                        bus_r, train_r),
+    max_episode_steps=300,
+)
 
 class GridSuttonBarto(gym.Env):
     """Example 4.1
@@ -22,9 +101,9 @@ class GridSuttonBarto(gym.Env):
         # Actions N, E, S, W
         self.action_space = spaces.Discrete(4)
         self.action_to_direction = {
-            0: -4, # North
+            0: -self.row, # North
             1: +1, # East
-            2: +4,  # South
+            2: +self.row,  # South
             3: -1  # West
         }
         self._agent_location = 0 # we always start from 0
@@ -79,7 +158,7 @@ class GridSuttonBarto(gym.Env):
             self._render_frame()
         return observation, info
     
-    def step(self, action: int):
+    def step(self, action):
         self._move(action)
         # An episode is done iff the agent has reached the target (this is always size - 1)
         terminated = self._agent_location == self.size - 1
