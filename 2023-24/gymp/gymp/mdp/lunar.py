@@ -1,4 +1,4 @@
-"""Module providing an example for VFA modeling
+"""Training an agent for Lunar Landing
 
 Action space
     0: do nothing
@@ -18,6 +18,8 @@ The episode receive an additional reward of -100 or +100 points for crashing or 
 """
 
 import time
+import vfa
+import torch
 import gymnasium as gym
 import pandas as pd
 import numpy as np
@@ -28,72 +30,68 @@ import seaborn as sns
 sns.set_theme(style="whitegrid")
 
 
-variables = ['Pos X', 'Pos Y', 'Vel X', 'Vel Y', 'Angle', 'Ang Vel', 'LonG', 'RonG']
-actions = {
-    0: "Do nothing", 1: "Left engine", 2: "Main engine", 3: "Right engine"
-}
+def create_environment(render_mode):
+    """Creates environment with render mode"""
+    env = gym.make(
+        "LunarLander-v2",
+        continuous = False, 
+        gravity = -10.0,
+        enable_wind = False,
+        wind_power = 15.0,
+        turbulence_power = 1.5,
+        render_mode=render_mode)
+    return env
 
-env = gym.make(
-    "LunarLander-v2",
-    continuous = False,
-    gravity = -10.0,
-    enable_wind = False,
-    wind_power = 15.0,
-    turbulence_power = 1.5,
-    render_mode="human"
-)
-
-def print_observation(observation):
-    """Print observations
-
-    Args:
-        observation (nd.array): state
+def greedy(env, state, w):
+    """Implements the greedy policy"""
+    def q(state, action):
+        x = torch.tensor(state, dtype=float, requires_grad=False)
+        return x @ w[:, action]
+    a = int(np.argmax(np.array([q(state, action).detach().numpy() for action in range(env.action_space.n)])))
+    return a
+    
+def main():
+    """Main execution
+    1. Run 10 episodes with no training
+    2. Train by SARSA
+    3. Run 10 episodes with trained agent
     """
-    for i, f in enumerate(observation):
-        print(f"{variables[i]:10}: {f:0.2f}")
+    # Run with no training
+    env = create_environment(render_mode="human")
+    for _ in range(10):
+        _, _ = env.reset()
+        done = False
+        while not done:
+            action = env.action_space.sample()
+            _, _, stop, truncated, _ = env.step(action=action)
+            done = stop or truncated
+            if done:
+                break
+    # Train
+    env = create_environment(render_mode="rgb_array")
+    state, _ = env.reset()
+    w, history, rewards = vfa.sarsa(env=env, n_steps=10_000, n_features=8)
+    
+    # Run some episodes with the greedy policy
+    env = create_environment(render_mode="human")
+    for _ in range(10):
+        state, _ = env.reset()
+        done = False
+        while not done:
+            action = greedy(env=env, state=state, w=w)
+            state, _, stop, truncated, _ = env.step(action=action)
+            done = stop or truncated
+            if done:
+                break
+    return history, rewards
 
-def plot(observation_data):
-    """Plots observation variables
-
-    Args:
-        observation_data (pandas dataframe): contains history of episode
-    """
-    palette = sns.color_palette("mako_r", 6)
-    _, ax = plt.subplots(figsize=(12, 8), ncols=3, nrows=3)
-    A = np.array(variables + ['Reward']).reshape(3, 3)
-    for x, row in enumerate(A):
-        for y, a in enumerate(row):
-            sns.lineplot(data=observation_data, y=a, 
-                        x=range(observation_data.shape[0]),
-                        markers=True, ax=ax[x, y])
-            ax[x, y].set_title(a)
+def conv(a, win=100):
+    return np.convolve(a, np.ones(win), mode='same') / win
+    
+if __name__ == '__main__':
+    history, rewards = main()
+    r = conv(rewards)
+    fig, ax = plt.subplots(figsize=(12, 8))
+    sns.lineplot(x=range(len(r)), y=r)
     plt.tight_layout()
     plt.show()
-
-def main():
-    """Execute script
-    """
-    observation, _ = env.reset()
-    print_observation(observation=observation)
-    collected_data = [list(observation) + [None, 0]]
-    for i in range(1000):
-        print("===============")
-        print(f"INTERACTION {i+1}")
-        print("===============")
-        action = env.action_space.sample()
-        print(f"Do action {actions[action]}")
-        print("===============")
-        new_observation, reward, stop, _, _ = env.step(action=0)
-        collected_data.append(list(new_observation) + [actions[action], reward])
-        print(f"Reward {reward}")
-        print("===============")
-        print_observation(new_observation)
-        time.sleep(.0002)
-        if stop:
-            break
-    history = pd.DataFrame(np.array(collected_data), columns=variables + ['Action', 'Reward'])
-    return history
-
-if __name__ == '__main__':
-    data =  main()
-    plot(data)

@@ -38,6 +38,6 @@ class BairdsCounterexample(gym.Env):
 
 gym.envs.registration.register(
     id='BairdsCounterexample-v0',
-    entry_point=lambda: BairdsCounterexample(),
+    entry_point = lambda: BairdsCounterexample(),
     nondeterministic=True,
 )
