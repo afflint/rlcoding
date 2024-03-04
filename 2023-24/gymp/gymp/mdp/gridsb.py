@@ -1,6 +1,6 @@
 """Implementing main algorithms with GyM for the GridSuttonBarto example
 """
-from mdp.environments import GridSuttonBarto
+from .environments import GridSuttonBarto
 import numpy as np
 
 

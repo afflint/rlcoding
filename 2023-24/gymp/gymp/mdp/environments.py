@@ -79,9 +79,11 @@ class Conservatorio(gym.Env):
 #Register the environment
 register(
     id="Conservatorio-v0",
-    entry_point=lambda size, train_prob, bus_prob, walk_r, 
-                                        bus_r, train_r: Conservatorio(size, train_prob, bus_prob, walk_r, 
-                                        bus_r, train_r),
+    entry_point=lambda size, train_prob, bus_prob, walk_r, bus_r, train_r: Conservatorio(size, 
+                                                                                        train_prob, 
+                                                                                        bus_prob, 
+                                                                                        walk_r, 
+                                                                                        bus_r, train_r),
     max_episode_steps=300,
 )
 
@@ -185,6 +187,83 @@ register(
     entry_point=lambda size: GridSuttonBarto(size=size),
     max_episode_steps=300,
 )
+
+class SimpleGrid(gym.Env):
+    metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
+    def __init__(self, size: int = 16, target: tuple = (0, 0)) -> None:
+        """Simple grid example. Rewards is -1 everywhere and 10 in the target.
+        Initial position is randomly determined. If you go out the grid you stay in the current position
+
+        Args:
+            size (int, optional): Grid size. Defaults to 16.
+            target (tuple, optional): Square with 10 reward. Defaults to (0, 0).
+
+        Raises:
+            ValueError: Error is the size is not square
+        """
+        super().__init__()
+        if not np.sqrt(size)**2 == size:
+            raise ValueError("Size must be a square")
+        self.size = size
+        self.row = int(np.sqrt(size))
+        self.observation_space = spaces.Box(0, size - 1, shape=(2,), dtype=int)
+        # Actions N, S, E, W
+        self.action_space = spaces.Discrete(4)
+        self.action_to_direction = {
+            0: np.array([0, 1]), # north
+            1: np.array([0, -1]), # south
+            2: np.array([1, 0]), # east
+            3: np.array([-1, 0]) # west
+        }
+        self._agent_location = np.random.randint(0, self.row, size=(2, )) # random position
+        self.target = np.array(target)
+        self.action_labels = ['N', 'S', 'E', 'W']
+    
+    def valid_location(self, location: np.ndarray):
+        if 0 <= location[0] < self.row and 0 <= location[1] < self.row:
+            return True
+        else:
+            return False
+        
+    def action_name(self, action: int):
+        return self.action_labels[action]
+    
+    def _get_obs(self):
+        return self._agent_location
+    
+    def _get_info(self):
+        return dict()
+
+    def reset(self, seed=None, options=None):
+        super().reset(seed=seed, options=options)
+        self._agent_location = np.random.randint(0, self.row, size=(2, ))
+        observation = self._get_obs()
+        info = self._get_info()
+        return observation, info
+    
+    def step(self, action):
+        s_prime = self._agent_location + self.action_to_direction[action]
+        if self.valid_location(s_prime):
+            self._agent_location = s_prime
+        else:
+            s_prime = self._agent_location
+        if np.array_equal(self._agent_location, self.target):
+            terminated = True 
+            reward = 10
+        else:
+            terminated = False
+            reward = -1
+        observation = self._get_obs()
+        info = self._get_info()
+        return observation, reward, terminated, False, info
+
+#Register the environment
+register(
+    id="SimpleGrid-v0",
+    entry_point=lambda size, target: SimpleGrid(size=size, target=target),
+    max_episode_steps=300,
+)
+
 
 class GridWorldEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
@@ -398,6 +477,7 @@ class ForestExampleEnv(gym.Env):
             7: {2: self.s('A')},
         }
         self.observation_space = spaces.Discrete(8)
+        self._agent_location = 0
         
     def _rewards(self, state):
         if state == self.s('H'):
