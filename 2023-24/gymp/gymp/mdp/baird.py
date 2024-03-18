@@ -34,6 +34,9 @@ class BairdsCounterexample(gym.Env):
     def seed(self, seed=None):
         self.np_random, seed = gymnasium.utils.seeding.np_random(seed)
         return [seed]
+    
+    def render(self):
+        pass
 
 
 gym.envs.registration.register(
