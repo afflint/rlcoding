@@ -80,7 +80,7 @@ gym.register(
 
 
 class BasicDuels(gym.Env):
-	def __init__(self, starting_hp: int = 20, opponent_distr: Optional[np.ndarray] = None):
+	def __init__(self, starting_hp: int = 20, retreat_prob: float = 0.2, opponent_distr: Optional[np.ndarray] = None):
 		super().__init__()
 
 		self.ACTION_TO_MOVES = ["melee", "ranged", "spell", "retreat", "heal"]
@@ -94,6 +94,7 @@ class BasicDuels(gym.Env):
 		])
 
 		self._starting_hp = starting_hp
+		self._retreat_prob = retreat_prob
 		self._opponent_distr = opponent_distr
 		
 		# The agent can choose between melee, range, spell attack, retreat or heal
@@ -133,9 +134,13 @@ class BasicDuels(gym.Env):
 
 		return self._get_obs(), {}
 
-	def _get_reward(self):
+	def _compute_reward(self, retreat):
 		agent_dead = self._agent_location <= 0
 		opponent_dead = self._target_location <= 0
+
+		if retreat:
+			# If the agent fled, give a lower reward
+			return 0.5
 
 		if agent_dead == opponent_dead:
 			# If both are dead or alive, no reward
@@ -146,7 +151,7 @@ class BasicDuels(gym.Env):
 
 	def step(self, action: int):
 		# Draw opponent action from their distribution
-		opponent_action = np.random.choice(self.NUM_ACTIONS, p=self._opponent_distr)
+		opponent_action = np.random.choice(self.NUM_ACTIONS, p = self._opponent_distr)
 
 		# Retrieve the effect of the two moves on the agent
 		self._agent_location += self.EFFECTIVENESS_TABLE[action, opponent_action]
@@ -157,14 +162,20 @@ class BasicDuels(gym.Env):
 		self._target_location += self.EFFECTIVENESS_TABLE[opponent_action, action]
 		self._target_location = np.clip(self._target_location, 0, self._starting_hp)
 
-		observation = self._get_obs()
-		info = self._get_info(action, opponent_action)
-
-		reward = self._get_reward()
-		
+		# If either player is out of hit points, the match is over
 		terminated = self._agent_location <= 0 or self._target_location <= 0
-		truncated = self.ACTION_TO_MOVES[action] == "retreat" \
-			or self.ACTION_TO_MOVES[opponent_action] == "retreat"
+
+		agent_retreat = self.ACTION_TO_MOVES[action] == "retreat"
+		opponent_retreat = self.ACTION_TO_MOVES[opponent_action] == "retreat"
+
+		truncated = False
+		if agent_retreat or opponent_retreat:
+			# A retreat is not always successfull
+			truncated = np.random.rand() <= self._retreat_prob
+
+		reward = self._compute_reward(truncated and agent_retreat)
+		info = self._get_info(action, opponent_action)
+		observation = self._get_obs()
 
 		return observation, reward, terminated, truncated, info
 
