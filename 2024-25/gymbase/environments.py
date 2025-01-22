@@ -164,7 +164,7 @@ class BasicDuels(gym.Env):
 		
 		terminated = self._agent_location <= 0 or self._target_location <= 0
 		truncated = self.ACTION_TO_MOVES[action] == "retreat" \
-			and self.ACTION_TO_MOVES[opponent_action] == "retreat"
+			or self.ACTION_TO_MOVES[opponent_action] == "retreat"
 
 		return observation, reward, terminated, truncated, info
 
