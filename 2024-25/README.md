@@ -10,7 +10,11 @@
 
 #### [Lecture 0: Introduction and recap](L0-gym-introduction.ipynb)
 
-This lecture introduces the **[Gymnasium](https://gymnasium.farama.org/)** library as a versatile tool for creating and experimenting with reinforcement learning environments. We will explore the fundamentals of Markov Decision Processes (MDPs), modeling real-world problems as MDPs, and creating custom environments in Gymnasium to test and compare these methods. Hands-on examples and coding exercises help bridge theory and practice, offering a clear understanding of how these techniques apply to different scenarios. In particular, we provide a quick recap of the main tabular reinforcement learning methods, including **dynamic programming**, **Monte Carlo**, **SARSA**, and **Q-learning**, by focusing on their implementation. 
+This lecture introduces the **[Gymnasium](https://gymnasium.farama.org/)** library as a versatile tool for creating and experimenting with reinforcement learning environments. We will explore the fundamentals of Markov Decision Processes (MDPs), modeling real-world problems as MDPs, and creating custom environments in Gymnasium to test and compare these methods. Hands-on examples and coding exercises help bridge theory and practice, offering a clear understanding of how these techniques apply to different scenarios. 
+
+#### [Lecture 1: Tabular Agents](L1-tabular-agents.ipynb)
+In this lecture we will focus on modeling Agents that learn by interacting with an MDP environment.
+In particular, we provide a quick recap of the main tabular reinforcement learning methods, including **dynamic programming**, **Monte Carlo**, **SARSA**, and **Q-learning**, by focusing on their implementation.
 
 #### [Lecture 7: Introducing to multi-agent reinforcement learning](L7-multiagent-rl.ipynb)
 
