@@ -16,6 +16,8 @@ This lecture introduces the **[Gymnasium](https://gymnasium.farama.org/)** libra
 In this lecture we will focus on modeling Agents that learn by interacting with an MDP environment.
 In particular, we provide a quick recap of the main tabular reinforcement learning methods, including **dynamic programming**, **Monte Carlo**, **SARSA**, and **Q-learning**, by focusing on their implementation.
 
+#### 
+
 #### [Lecture 7: Introducing to multi-agent reinforcement learning](L7-multiagent-rl.ipynb)
 
 Departing from the single-agent setting, we explore the complexities that arise when considering a system with multiple learning agents to understand what knowledge can be trasferred. We formalize the notion of MDP in the multi-agent setting and start to understand that to model multi-agent systems and learning we require a different theorical model, which leverages notions from the study of strategic interactions between agents, also called _game theory_. Examples are provided using the **[PettingZoo](https://pettingzoo.farama.org/)** library from the Farama foundation, which provides the same API as Gymansium.
