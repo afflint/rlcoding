@@ -280,3 +280,95 @@ gym.register(
     id="TaxationGame-v0",
     entry_point=lambda years, transitions, rewards: TaxationEnv(years, transitions, rewards),
 )
+
+
+class JoustingDuelEnv(gym.Env):
+    """
+    A simple jousting duel environment for Gymnasium.
+    - Continuous state space (relative distance, relative speed, lance angles)
+    - Discrete action space (steering left/right, adjusting lance angle)
+    """
+    def __init__(self, starting_distance: int = 80):
+        super(JoustingDuelEnv, self).__init__()
+        
+        # State: [relative distance, relative speed, agent lance angle, opponent lance angle]
+        self.observation_space = gym.spaces.Box(low=np.array([0.0, -5.0, -1.0, -1.0]),
+                                            high=np.array([starting_distance, 5.0, 1.0, 1.0]), dtype=np.float64)
+        
+        # Discrete action space: [Steer Left, Stay, Steer Right, Tilt Lance Up, Tilt Lance Down]
+        self.action_space = gym.spaces.Discrete(6)
+        
+        # Environment parameters
+        self.max_distance = starting_distance  # Starting distance
+        self.min_distance = 0.0   # Collision point
+        self.speed_agent = 1.0    # Fixed speed for agent
+        self.speed_opponent = 1.0 # Fixed speed for opponent
+        self.lance_angle_change = 0.1 # Change in lance angle per action
+        
+        self.reset()
+    
+    def _get_info(self):
+        info = {
+            'relative_speed': self.relative_speed
+        }
+        return info
+    
+    def reset(self, seed=None, options=None):
+        """ Reset the environment to the initial state """
+        self.relative_distance = self.max_distance
+        self.relative_speed = self.speed_agent + self.speed_opponent  # Assume both start at same speed
+        self.agent_lance_angle = 0.0  # Neutral
+        self.opponent_lance_angle = np.random.uniform(-1, 1)  # Randomized opponent angle
+        
+        return np.array([self.relative_distance, self.relative_speed, self.agent_lance_angle, self.opponent_lance_angle], dtype=np.float64), self._get_info()
+    
+    def step(self, action):
+        """ Apply action and update state """
+        # Process action
+        if action == 0:  # Steer left
+            self.agent_lance_angle -= self.lance_angle_change
+        elif action == 1:  # Stay centered
+            pass
+        elif action == 2:  # Steer right
+            self.agent_lance_angle += self.lance_angle_change
+        elif action == 3:  # Tilt lance up
+            self.agent_lance_angle += self.lance_angle_change
+        elif action == 4:  # Tilt lance down
+            self.agent_lance_angle -= self.lance_angle_change
+        elif action == 5: # Increase speed
+            self.speed_agent += 1
+            self.relative_speed = min([self.speed_agent + self.speed_opponent, 5])
+        
+        # Update position
+        self.relative_distance -= abs(self.relative_speed)  # Move towards each other
+        done = self.relative_distance <= self.min_distance
+        truncated = False
+        
+        # Calculate reward
+        if done:
+            if abs(self.agent_lance_angle - self.opponent_lance_angle) < 0.2:
+                reward = 100  # Successful hit
+            else:
+                reward = -50  # Missed or got hit
+        else:
+            reward = -1  # Encourage efficiency
+        
+        next_state = np.array([self.relative_distance, self.relative_speed, self.agent_lance_angle, self.opponent_lance_angle], dtype=np.float64)
+        return next_state, reward, done, truncated, self._get_info()
+    
+    def render(self, mode='human'):
+        render = f"""
+        Distance: {self.relative_distance:.2f}, 
+        Agent Lance Angle: {self.agent_lance_angle:.2f}, 
+        Opponent Lance Angle: {self.opponent_lance_angle:.2f}, 
+        Distance to target: {abs(self.agent_lance_angle - self.opponent_lance_angle):.2f}"""
+        print(render)
+    
+    def close(self):
+        pass
+
+# Registering the environment
+gym.register(
+    id='JoustingDuel-v0',
+    entry_point=lambda distance: JoustingDuelEnv(starting_distance=distance),
+)
