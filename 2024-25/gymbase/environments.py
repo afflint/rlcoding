@@ -1,6 +1,8 @@
 import numpy as np
 import gymnasium as gym
 from typing import Tuple, Optional
+import matplotlib.pyplot as plt
+import io 
 
 
 class Conservatorio(gym.Env):
@@ -313,6 +315,24 @@ class JoustingDuelEnv(gym.Env):
         }
         return info
     
+    def _angle_to_map(self, theta):
+        theta_rad = theta * np.pi
+        x = np.cos(theta_rad)
+        y = np.sin(theta_rad)
+        return x, y
+
+    def _save_ax_nosave(self, ax, **kwargs):
+        ax.axis("off")
+        ax.figure.canvas.draw()
+        trans = ax.figure.dpi_scale_trans.inverted() 
+        bbox = ax.bbox.transformed(trans)
+        buff = io.BytesIO()
+        plt.savefig(buff, format="png", dpi=ax.figure.dpi, bbox_inches=bbox,  **kwargs)
+        ax.axis("on")
+        buff.seek(0)
+        im = plt.imread(buff)
+        return im
+    
     def reset(self, seed=None, options=None):
         """ Reset the environment to the initial state """
         self.relative_distance = self.max_distance
@@ -356,13 +376,29 @@ class JoustingDuelEnv(gym.Env):
         next_state = np.array([self.relative_distance, self.relative_speed, self.agent_lance_angle, self.opponent_lance_angle], dtype=np.float64)
         return next_state, reward, done, truncated, self._get_info()
     
-    def render(self, mode='human'):
+    def render(self):
         render = f"""
         Distance: {self.relative_distance:.2f}, 
         Agent Lance Angle: {self.agent_lance_angle:.2f}, 
         Opponent Lance Angle: {self.opponent_lance_angle:.2f}, 
         Distance to target: {abs(self.agent_lance_angle - self.opponent_lance_angle):.2f}"""
         print(render)
+    
+    def show_target(self, title: str = None):
+        fig, ax = plt.subplots(figsize=(3, 3))
+        x_agent, y_agent = self._angle_to_map(self.agent_lance_angle)
+        x_opponent, y_opponent = self._angle_to_map(self.opponent_lance_angle)
+        hit_area = plt.Circle((x_opponent, y_opponent), 0.2, color='g', clip_on=True, alpha=0.4)
+        ax.add_patch(hit_area)
+        ax.scatter(x_agent, y_agent)
+        ax.scatter(x_opponent, y_opponent)
+        ax.set_xlim((-1.1, 1.1))
+        ax.set_ylim((-1.1, 1.1))
+        if title is not None:
+            ax.set_title(title)
+        plt.tight_layout()
+        plt.show()
+
     
     def close(self):
         pass
