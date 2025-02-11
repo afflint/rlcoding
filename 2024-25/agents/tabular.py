@@ -59,10 +59,11 @@ class QLearning(TabularAgent):
         self.epsilon = max(self.e_final, self.epsilon - self.e_decay)
     
     def update(self, state: Any, action: Any, reward: float, terminated: bool, s_prime: Any):
-        Q_hat = (not terminated) * self.V(s_prime)
-        TD = reward + self.gamma * Q_hat - self.Q[state][action]
-        self.Q[state][action] += self.eta * TD
-        return TD
+        q_hat = self.Q[state][action]
+        target = reward + self.gamma * self.V(s_prime)
+        delta = target - q_hat
+        self.Q[state][action] += self.eta * delta
+        return delta
     
     def train(self, max_iterations: int = 100000, save_every: int = None):
         if save_every is None:
@@ -82,7 +83,7 @@ class QLearning(TabularAgent):
                 state = s_prime
             if i % save_every == 0:
                 self.history.append(self.Q.copy())
-                self.error.append(np.array(avg_error).min())
+                self.error.append(np.array(avg_error).mean())
             self.decay_epsilon()
 
 
@@ -114,17 +115,19 @@ class Sarsa(TabularAgent):
         self.epsilon = max(self.e_final, self.epsilon - self.e_decay)
     
     def update(self, state: Any, action: Any, reward: float, terminated: bool, s_prime: Any):
-        a_prime = self.greedy(s_prime)
-        Q_hat = (not terminated) * self.Q[s_prime][a_prime]
-        TD = reward + self.gamma * Q_hat - self.Q[state][action]
-        self.Q[state][action] += self.eta * TD
-        return TD
+        a_prime = self.explore(s_prime)
+        q_hat = self.Q[state][action]
+        target = reward + self.gamma * self.Q[s_prime][a_prime]
+        delta = target - q_hat
+        self.Q[state][action] += self.eta * delta
+        return delta
     
     def train(self, max_iterations: int = 100000, save_every: int = None):
         if save_every is None:
             save_every = max_iterations
         self.e_decay = self.epsilon / (max_iterations / 2)
         run = list(enumerate(range(max_iterations)))
+        avg_error = []
         for i, episode in tqdm(run):
             state, info = self.mdp.reset()
             done = False
@@ -132,11 +135,12 @@ class Sarsa(TabularAgent):
                 action = self.explore(state)
                 s_prime, reward, terminated, truncated, info = self.mdp.step(action)
                 error = self.update(state=state, action=action, reward=reward, terminated=terminated, s_prime=s_prime)
+                avg_error.append(error)
                 done = terminated or truncated 
                 state = s_prime
             if i % save_every == 0:
                 self.history.append(self.Q.copy())
-                self.error.append(error)
+                self.error.append(np.array(avg_error).mean())
             self.decay_epsilon()
 
 
