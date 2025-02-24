@@ -23,6 +23,7 @@ In particular, we provide a quick recap of the main tabular reinforcement learni
 
 #### Lecture 2: Value Function Approximation
 - [Introduction to VFA](L2.0-value-function-approximation.ipynb)
+- [Linear Function Approximation](L2.0-linear-function-approximation.ipynb)
 
 In this lecture, we discuss RL problems where the large number of states and the need to generalize the notion of state make the tabular solutions unfeasible. We will see how we can address such an issue by approximating the state value function $V(s)$ or the state-action function $Q(s, a)$.
 
