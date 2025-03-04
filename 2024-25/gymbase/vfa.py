@@ -23,10 +23,15 @@ class LinearApproximator:
 
 
 def egreedy_policy(env: gym.Env, approximator: LinearApproximator, state: Any, epsilon: float):
+    dummy = copy.copy(env)
     if np.random.rand() < epsilon:
         return env.action_space.sample()
     else:
-        return np.argmax([approximator.predict(state) for _ in range(env.action_space.n)])
+        next_states = []
+        for action in range(dummy.action_space.n):
+            s_prime, _, _, _, _ = dummy.step(action)
+            next_states.append(s_prime)
+        return np.argmax(next_states)
 
 def monte_carlo(env: gym.Env, approximator: LinearApproximator, 
                 episodes: int = 1000, gamma: float = 0.99, epsilon: float = 1.0, 
@@ -69,7 +74,7 @@ def td_0(env: gym.Env, approximator: LinearApproximator,
 class LinearQApproximator:
     def __init__(self, feature_extractor: callable, num_features: int, num_actions: int, alpha=0.01):
         self.feature_extractor = feature_extractor
-        self.weights = np.ones((num_actions, num_features))
+        self.weights = np.zeros((num_actions, num_features))
         self.alpha = alpha
         self.error_log = []
     
