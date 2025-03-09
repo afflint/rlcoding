@@ -36,4 +36,8 @@ In this lecture, we will explore a from scratch implementation of Linear FA and 
 
 - [Introduction to MARL](./L7-multiagent-rl.ipynb)
 
-Departing from the single-agent setting, we explore the complexities that arise when considering a system with multiple learning agents to understand what knowledge can be trasferred. We formalize the notion of MDP in the multi-agent setting and start to understand that to model multi-agent systems and learning we require a different theorical model, which leverages notions from the study of strategic interactions between agents, also called _game theory_. Examples are provided using the **[PettingZoo](https://pettingzoo.farama.org/)** library from the Farama foundation, which provides the same API as Gymansium.
+Departing from the single-agent setting, we explore the complexities that arise when considering a system with multiple learning agents to understand what results can be trasferred over from classic RL and the associated limitations. We consider the case of a single global agent learning policies for all players simultaneously and the case where each agent learns independently, comparing the results and dicussing scalability. Examples are developed using the **[PettingZoo](https://pettingzoo.farama.org/)** library from the Farama foundation, which provides the same API as Gymansium.
+
+### [Lecture 8: Game theory basics for MARL](L8-introduction-to-game-theory.ipynb)
+
+We introduce the necessary theoretical background to understand how multiple agents can interact in a complex environment and analyse different solution concepts that may arise. Examples of theoretical games are proposed and discussed under the lens of equilibrium selection, with particular interest towards Nash equilibria, their existence and computability. We formalize the notion of MDP in the multi-agent setting and start to understand that to model multi-agent systems and learning we require the presented game-theoretical approach.
