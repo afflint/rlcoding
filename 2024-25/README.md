@@ -32,6 +32,8 @@ In this lecture, we discuss RL problems where the large number of states and the
 
 In this lecture, we will explore a from scratch implementation of Linear FA and we will discuss some limits of this approach.
 
-#### [Lecture 7: Introducing to multi-agent reinforcement learning](L7-multiagent-rl.ipynb)
+#### Lecture 7: Introducing to multi-agent reinforcement learning
+
+- [Introduction to MARL](./L7-multiagent-rl.ipynb)
 
 Departing from the single-agent setting, we explore the complexities that arise when considering a system with multiple learning agents to understand what knowledge can be trasferred. We formalize the notion of MDP in the multi-agent setting and start to understand that to model multi-agent systems and learning we require a different theorical model, which leverages notions from the study of strategic interactions between agents, also called _game theory_. Examples are provided using the **[PettingZoo](https://pettingzoo.farama.org/)** library from the Farama foundation, which provides the same API as Gymansium.
