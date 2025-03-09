@@ -35,7 +35,9 @@ In this lecture, we will explore a from scratch implementation of Linear FA and 
 
 #### Lecture 4: Deep Q-Learning (DQN)
 
-- [DQN overview](./L4.0-dqn.ipynb)
+- [Deep Reinforcement Learning overview](./L4.0-drl.ipynb)
+
+- [DQN overview](./L4.1-dqn.ipynb)
 
 In this lecture we will explore how deep learning has changed RL, allowing agents to solve complex tasks that were previously intractable. We will touch upon key concepts and algorithms that underpin this approach and we will discuss a simple implementation of a DQN.
 
