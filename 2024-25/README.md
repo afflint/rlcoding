@@ -29,15 +29,30 @@ In this lecture, we discuss RL problems where the large number of states and the
 
 #### Lecture 3: Linear Function Approximation
 - [Implementing Linear Function approximation](./L3.0-linear-fa.ipynb)
+- [Baird's counterexample](./L3.1-baird.ipynb)
 
 In this lecture, we will explore a from scratch implementation of Linear FA and we will discuss some limits of this approach.
 
-#### Lecture 7: Introducing to multi-agent reinforcement learning
+#### Lecture 4: Deep Q-Learning (DQN)
 
-- [Introduction to MARL](./L7-multiagent-rl.ipynb)
+- [DQN overview](./L4.0-dqn.ipynb)
+
+In this lecture we will explore how deep learning has changed RL, allowing agents to solve complex tasks that were previously intractable. We will touch upon key concepts and algorithms that underpin this approach and we will discuss a simple implementation of a DQN.
+
+#### Lecture 5: Policy Gradient
+
+- [REINFORCE](./L5.0-reinforce.ipynb)
+
+In this lecture, we introduce the idea of modeling the policy as a probability distribution over the action space. In particular, we will touch the Policy Gradient Theorem and we will see a simple implementation of REINFORCE.
+
+#### Lecture 6: Introducing Multi-Agent Reinforcement Learning
+
+- [Introduction to MARL](./L6.0-multiagent-rl.ipynb)
 
 Departing from the single-agent setting, we explore the complexities that arise when considering a system with multiple learning agents to understand what results can be trasferred over from classic RL and the associated limitations. We consider the case of a single global agent learning policies for all players simultaneously and the case where each agent learns independently, comparing the results and dicussing scalability. Examples are developed using the **[PettingZoo](https://pettingzoo.farama.org/)** library from the Farama foundation, which provides the same API as Gymansium.
 
-### [Lecture 8: Game theory basics for MARL](L8-introduction-to-game-theory.ipynb)
+#### Lecture 7: Game Theory Basics for MARL
+
+- [Game Theory](L7.0-introduction-to-game-theory.ipynb)
 
 We introduce the necessary theoretical background to understand how multiple agents can interact in a complex environment and analyse different solution concepts that may arise. Examples of theoretical games are proposed and discussed under the lens of equilibrium selection, with particular interest towards Nash equilibria, their existence and computability. We formalize the notion of MDP in the multi-agent setting and start to understand that to model multi-agent systems and learning we require the presented game-theoretical approach.
