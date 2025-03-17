@@ -58,3 +58,7 @@ Departing from the single-agent setting, we explore the complexities that arise 
 - [Game Theory](L7.0-introduction-to-game-theory.ipynb)
 
 We introduce the necessary theoretical background to understand how multiple agents can interact in a complex environment and analyse different solution concepts that may arise. Examples of theoretical games are proposed and discussed under the lens of equilibrium selection, with particular interest towards Nash equilibria, their existence and computability. We formalize the notion of MDP in the multi-agent setting and start to understand that to model multi-agent systems and learning we require the presented game-theoretical approach.
+
+#### Projects
+
+The ideas of the final project are available [here](./projects/reinforcement_learning_projects_2024-25.pdf)
