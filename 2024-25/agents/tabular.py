@@ -207,7 +207,10 @@ class MonteCarlo(TabularAgent):
                 G = sum([reward * (self.gamma ** i) for i, (_, _, reward) in enumerate(episode[first_occurrence:])])
                 self.G_values[(state, action)] += G 
                 self.G_count[(state, action)] += 1
+            
+            for state, action in visited_pairs:
                 error = self.update(state, action, None, None, None)
+            
             if i % save_every == 0:
                 self.history.append(self.Q.copy())
                 self.error.append(error)
