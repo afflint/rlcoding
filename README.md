@@ -8,17 +8,19 @@
 
 Data Science and Economics Master Degree, Università degli Studi di Milano
 
+Computer Science Master Degree, Università degli Studi di Milano
+
 ### Lecture notes
 - Prof. Cesa-Bianchi lecture notes are available at [https://cesa-bianchi.di.unimi.it/RL/](https://cesa-bianchi.di.unimi.it/RL/)
-- Prof. Ferrara lecture notes are available in this repository in the `2024-25` folder.
+- Prof. Ferrara lecture notes are available in this repository in the `2025-26` folder.
 
 ## Repository organization
 
-Materials are organized by Academic Year.
+Materials are organized by Academic Year. See the `2025-26/README.md` for details about the 2025-26 edition.
 
 <!-- Coding is implemented using the Python libraries [pyenv](https://github.com/pyenv/pyenv) for setting up the virtual environment. -->
 
-AY 2024-25 **lecture notes** from Alfio Ferrara and Luigi Foscari are available in the `2024-25` folder, mainly as `Jupyter notebooks`. These documents are **frequently updated**, thus stay tuned with the last versions.
+AY 2025-26 **lecture notes** from Alfio Ferrara and Luigi Foscari are available in the `2025-26` folder, mainly as `Jupyter notebooks`. These documents are **frequently updated**, thus stay tuned with the last versions.
 
 The suggested version of Python is 3.11, you can use [pyenv](https://github.com/pyenv/pyenv) to change it. It is possible to create a _virtual environment_ to manage the required packages like `gymnasium` and `pettingzoo`. Start by creating the environment and then activating it
 ```bash
