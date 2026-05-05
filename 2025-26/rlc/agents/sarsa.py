@@ -1,14 +1,19 @@
-"""Tabular Q-learning agent.
+"""Tabular SARSA agent.
 
 The agent maintains a Q-table of shape (n_states, n_actions) and updates it
-on each environment transition with the standard Q-learning rule
+on each environment transition with the SARSA rule
 
-    Q[s, a] <- Q[s, a] + alpha * (r + gamma * (1 - terminated) * max Q[s', .] - Q[s, a]).
+    Q[s, a] <- Q[s, a] + alpha * (r + gamma * (1 - terminated) * Q[s', a'] - Q[s, a])
 
-Action selection is epsilon-greedy with an exponential decay of epsilon over
-episodes. The interface (select_action, update, end_episode) is shared with
-the SARSA and Monte Carlo agents introduced in Lecture 2, so that the same
-training loop drives all three algorithms unchanged.
+where ``a'`` is the action sampled by the behaviour policy at the new state.
+The training loop is responsible for sampling ``a'`` *before* the update and
+passing it through the ``next_action`` argument: this preserves the on-policy
+property and ensures that the action evaluated in the target is the same
+action that will actually be executed at the next step.
+
+The interface (select_action, update, end_episode) is shared with the
+Q-learning and Monte Carlo agents of the course. The differences between
+SARSA and Q-learning are entirely confined to the body of ``update``.
 """
 
 from __future__ import annotations
@@ -18,18 +23,16 @@ from typing import Optional
 import numpy as np
 
 
-class QLearningAgent:
-    """Tabular Q-learning agent for environments with discrete state and
-    action spaces.
+class SARSAAgent:
+    """Tabular SARSA agent for environments with discrete state and action
+    spaces.
 
     Parameters
     ----------
     n_states, n_actions : int
-        Sizes of the state and action spaces. For a Gymnasium environment
-        with ``Discrete`` spaces these are ``env.observation_space.n`` and
-        ``env.action_space.n``.
+        Sizes of the state and action spaces.
     alpha : float
-        Learning rate (step size) of the Q-learning update.
+        Learning rate of the SARSA update.
     gamma : float
         Discount factor in [0, 1].
     epsilon_start, epsilon_min : float
@@ -38,12 +41,9 @@ class QLearningAgent:
         Multiplicative decay applied to ``epsilon`` at the end of each
         episode: ``epsilon <- max(epsilon_min, epsilon * epsilon_decay)``.
     initial_q : float
-        Constant value used to initialise the Q-table. ``0.0`` is the
-        textbook choice; positive values implement *optimistic
-        initialisation*, which encourages early exploration.
+        Constant value used to initialise the Q-table.
     seed : int, optional
-        Seed of the agent's internal random number generator, used for
-        epsilon-greedy tie-breaking and exploratory action sampling.
+        Seed of the agent's internal random number generator.
     """
 
     def __init__(
@@ -79,13 +79,9 @@ class QLearningAgent:
         self.epsilon_decay = float(epsilon_decay)
         self.initial_q = float(initial_q)
 
-        # Q-table: rows = states, columns = actions.
         self.Q = np.full((self.n_states, self.n_actions), self.initial_q, dtype=np.float64)
-
-        # Current epsilon (decayed across episodes).
         self.epsilon = self.epsilon_start
 
-        # Internal RNG, separate from the environment's RNG.
         self._rng = np.random.default_rng(seed)
 
     # ---------------------------------------------------------------------
@@ -93,13 +89,7 @@ class QLearningAgent:
     # ---------------------------------------------------------------------
 
     def select_action(self, state: int, *, greedy: bool = False) -> int:
-        """Pick an action in ``state``.
-
-        With ``greedy=False`` (default) the action is epsilon-greedy with
-        respect to the current Q-table; with ``greedy=True`` the action is
-        always the greedy one. Greedy mode is intended for *evaluation*
-        rollouts, not for training.
-        """
+        """Pick an action in ``state`` using epsilon-greedy (or greedy)."""
         if not greedy and self._rng.random() < self.epsilon:
             return int(self._rng.integers(self.n_actions))
         return self._argmax_random_tiebreak(self.Q[state])
@@ -121,24 +111,43 @@ class QLearningAgent:
         reward: float,
         next_state: int,
         terminated: bool,
-        next_action: Optional[int] = None,  # this is made for compatibility with SARSA, ignored in Q-Learning
+        *,
+        next_action: Optional[int] = None,
     ) -> None:
-        """Apply the Q-learning update for a single transition.
+        """Apply the SARSA update for a single transition.
 
-        The bootstrap term is zeroed out only when ``terminated`` is True;
-        a ``truncated`` transition (not exposed here) should still bootstrap.
+        Parameters
+        ----------
+        state, action : int
+            State and action at time t.
+        reward : float
+            Immediate reward observed.
+        next_state : int
+            State at time t+1.
+        terminated : bool
+            Whether ``next_state`` is a terminal state of the MDP.
+        next_action : int, optional
+            Action sampled by the behaviour policy at ``next_state``.
+            Required when ``terminated`` is False; ignored (and may be
+            ``None``) when ``terminated`` is True, because the bootstrap
+            term is then zero.
         """
-        bootstrap = 0.0 if terminated else float(self.Q[next_state].max())
+        if terminated:
+            bootstrap = 0.0
+        else:
+            if next_action is None:
+                raise ValueError(
+                    "SARSAAgent.update requires `next_action` for non-terminal "
+                    "transitions; got next_action=None with terminated=False."
+                )
+            bootstrap = float(self.Q[next_state, next_action])
+
         td_target = reward + self.gamma * bootstrap
         td_error = td_target - self.Q[state, action]
         self.Q[state, action] += self.alpha * td_error
 
     def end_episode(self) -> None:
-        """Hook called by the training loop at the end of every episode.
-
-        For Q-learning the only per-episode bookkeeping is the epsilon decay.
-        SARSA and Monte Carlo will reuse this hook for their own bookkeeping.
-        """
+        """End-of-episode hook: decay epsilon."""
         self.epsilon = max(self.epsilon_min, self.epsilon * self.epsilon_decay)
 
     # ---------------------------------------------------------------------

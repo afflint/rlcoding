@@ -33,6 +33,7 @@ class Agent(Protocol):
         reward: float,
         next_state: int,
         terminated: bool,
+        next_action: Optional[int] = None
     ) -> None: ...
     def end_episode(self) -> None: ...
 
@@ -189,19 +190,36 @@ def train(
         ep_return = 0.0
         ep_length = 0
 
+        action = agent.select_action(obs)
         while True:
-            action = agent.select_action(obs)
             next_obs, reward, terminated, truncated, _ = env.step(action)
-            agent.update(obs, action, reward, next_obs, terminated)
 
-            obs = next_obs
+            # Sample the next action *before* the update, so that on-policy
+            # methods (SARSA) can use it as part of their TD target.
+            # For terminal transitions the next action is irrelevant: pass
+            # None and let the agent's update zero out the bootstrap based
+            # on `terminated`.
+            done = terminated or truncated
+            next_action = (
+                None if done else agent.select_action(next_obs)
+            )
+
+            agent.update(
+                obs, action, reward, next_obs, terminated,
+                next_action=next_action,
+            )
+
             ep_return += reward
             ep_length += 1
 
-            if terminated or truncated:
+            if done:
                 break
             if max_steps_per_episode is not None and ep_length >= max_steps_per_episode:
                 break
+
+            # Reuse the next_action sampled above; do not resample.
+            obs = next_obs
+            action = next_action
 
         agent.end_episode()
 
