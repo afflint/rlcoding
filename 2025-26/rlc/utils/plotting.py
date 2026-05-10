@@ -542,3 +542,126 @@ def summarize_evaluations(
             last_k_std=float(last_means.std()),
         ))
     return out
+
+def plot_discretized_policy(
+    agent,
+    wrapper,
+    inner_env,
+    *,
+    figsize: tuple[float, float] = (12, 6),
+    cmap: str = "viridis",
+    arrow_color: str = "white",
+    annotate_values: bool = False,
+    vmin: Optional[float] = None,
+    vmax: Optional[float] = None,
+) -> Figure:
+    """Plot a tabular agent's policy on a discretized continuous environment.
+
+    Renders the policy and value function on the *continuous* coordinates
+    of the underlying environment, drawing each bin as a coloured rectangle
+    and overlaying the greedy action arrow at its centre. Toxic and goal
+    regions are drawn in their own colours, on top of the value heatmap.
+
+    The function is meant for ``DiscretizingWrapper`` applied to a
+    ``ContinuousMicrobeEnv``-like environment that exposes the relevant
+    geometric attributes (``width``, ``height``, ``toxic_rect``,
+    ``goal_center``, ``goal_radius``, ``start_pos``).
+
+    Parameters
+    ----------
+    agent : tabular agent
+        Agent with ``state_values()`` and ``greedy_policy()`` methods,
+        whose Q-table indexes match the wrapper's discrete observations.
+    wrapper : DiscretizingWrapper
+        Wrapper used during training, providing ``n_bins_x``, ``n_bins_y``,
+        ``bin_size_x``, ``bin_size_y``, and ``bin_center``.
+    inner_env : ContinuousMicrobeEnv
+        Underlying continuous environment, used for the dish geometry.
+        A wrapped env can be passed; ``unwrapped`` is applied internally.
+    """
+    inner_env = getattr(inner_env, "unwrapped", inner_env)
+
+    nx, ny = wrapper.n_bins_x, wrapper.n_bins_y
+    values = agent.state_values().reshape(ny, nx)
+    policy = agent.greedy_policy().reshape(ny, nx)
+
+    # Mask bins whose centre falls inside the toxic or goal region.
+    mask = np.zeros((ny, nx), dtype=bool)
+    for by in range(ny):
+        for bx in range(nx):
+            cx, cy = wrapper.bin_center(by * nx + bx)
+            in_toxic = inner_env._is_toxic(np.array([cx, cy]))
+            in_goal = inner_env._is_goal(np.array([cx, cy]))
+            if in_toxic or in_goal:
+                mask[by, bx] = True
+    values_masked = np.ma.array(values, mask=mask)
+
+    fig, ax = plt.subplots(figsize=figsize)
+
+    # Value heatmap on the continuous coordinates.
+    im = ax.imshow(
+        values_masked,
+        cmap=cmap,
+        origin="upper",
+        interpolation="nearest",
+        extent=(0.0, inner_env.width, inner_env.height, 0.0),
+        vmin=vmin, vmax=vmax,
+        aspect="equal",
+    )
+    cbar = fig.colorbar(im, ax=ax, fraction=0.025, pad=0.02)
+    cbar.set_label(r"$V(s) = \max_a Q(s,a)$")
+
+    # Toxic rectangle (filled).
+    xmin, ymin, xmax, ymax = inner_env.toxic_rect
+    ax.add_patch(plt.Rectangle((xmin, ymin), xmax - xmin, ymax - ymin,
+                               facecolor="#8c2a8c", edgecolor="black",
+                               linewidth=0.5))
+
+    # Goal disc (filled).
+    goal_circ = plt.Circle(
+        (inner_env.goal_center[0], inner_env.goal_center[1]),
+        inner_env.goal_radius,
+        facecolor="#338c33", edgecolor="black", linewidth=0.5,
+    )
+    ax.add_patch(goal_circ)
+
+    # Start marker.
+    sx, sy = inner_env.start_pos[0], inner_env.start_pos[1]
+    ax.add_patch(plt.Rectangle((sx - 0.25, sy - 0.25), 0.5, 0.5,
+                               fill=False, edgecolor="white", linewidth=2.0))
+
+    # Greedy policy arrows on free bins.
+    arrow_dx_dy = {
+        0: (0.0, -1.0),  # up: y decreases
+        1: (+1.0, 0.0),  # right
+        2: (0.0, +1.0),  # down: y increases
+        3: (-1.0, 0.0),  # left
+    }
+    arrow_len = 0.35 * min(wrapper.bin_size_x, wrapper.bin_size_y)
+    for by in range(ny):
+        for bx in range(nx):
+            if mask[by, bx]:
+                continue
+            cx, cy = wrapper.bin_center(by * nx + bx)
+            dx, dy = arrow_dx_dy[int(policy[by, bx])]
+            ax.arrow(
+                cx, cy,
+                dx * arrow_len, dy * arrow_len,
+                head_width=arrow_len * 0.5,
+                head_length=arrow_len * 0.5,
+                fc=arrow_color, ec=arrow_color,
+                length_includes_head=True, linewidth=0.8,
+            )
+            if annotate_values:
+                ax.text(cx, cy + 0.5 * wrapper.bin_size_y * 0.6,
+                        f"{values[by, bx]:.0f}",
+                        ha="center", va="center",
+                        color=arrow_color, fontsize=6)
+
+    ax.set_xlim(0.0, inner_env.width)
+    ax.set_ylim(inner_env.height, 0.0)
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    ax.set_title("Greedy policy and state values (discretized)")
+    fig.tight_layout()
+    return fig
